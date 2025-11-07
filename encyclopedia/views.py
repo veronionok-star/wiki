@@ -1,12 +1,16 @@
 from django.shortcuts import render
+from django import forms
 
 from . import util
 import markdown2
 
+class NewSearchForm(forms.Form):
+    search_text = forms.CharField(label="my")
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
+        "entries": util.list_entries(),
+        "form": NewSearchForm
     })
 
 def entries(request, name):
