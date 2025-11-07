@@ -4,4 +4,4 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index")
-]
+    path("<str:entry>", views.entries, entry="entries") ]
