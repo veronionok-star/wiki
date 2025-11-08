@@ -31,15 +31,24 @@ def entries(request, name):
     
 def search(request):
     if request.method == "POST":
+        entries = []
+        all_entries = util.list_entries()
         form = NewSearchForm(request.POST)
         if form.is_valid():
             search_text = form.cleaned_data["search_text"]
             print("form is valid")
-            if search_text in util.list_entries():
+            if search_text in all_entries:
                 return HttpResponseRedirect(f'/wiki/{search_text}')
-                print("redirected")
+            else:
+                for i in all_entries:
+                    if search_text in i:
+                        entries.append(i)
+                return render(request, "encyclopedia/index.html", {
+                "form": form,
+                "entries": entries
+            })
         else:
             print("not valid")
-            return render(request, "tasks/add.html", {
+            return render(request, "encyclopedia/index.html", {
                 "form": form
             })
