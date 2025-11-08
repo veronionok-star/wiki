@@ -13,7 +13,8 @@ class NewSearchForm(forms.Form):
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries(),
-        "form": NewSearchForm
+        "form": NewSearchForm,
+        "text": "All pages"
     })
 
 def entries(request, name):
@@ -22,11 +23,13 @@ def entries(request, name):
         html = markdown2.markdown(entry_md)
         return render(request, "encyclopedia/entry.html", {
             "entry": html,
-            "entry_name": name
+            "entry_name": name,
+            "form": NewSearchForm,
         })
     except TypeError:
         return render(request, "encyclopedia/error.html", {
-            "entry_name": name
+            "entry_name": name,
+            "form": NewSearchForm,
         })
     
 def search(request):
@@ -45,10 +48,23 @@ def search(request):
                         entries.append(i)
                 return render(request, "encyclopedia/index.html", {
                 "form": form,
-                "entries": entries
+                "entries": entries,
+                "text": "Results"
             })
         else:
             print("not valid")
             return render(request, "encyclopedia/index.html", {
                 "form": form
             })
+def new(request):
+    return render(request, "encyclopedia/new.html", {
+        "entries": util.list_entries(),
+        "form": NewSearchForm
+    })
+
+def add(request):
+    return render(request, "encyclopedia/index.html", {
+        "entries": util.list_entries(),
+        "form": NewSearchForm,
+        "text": "All pages"
+    })
