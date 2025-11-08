@@ -5,7 +5,8 @@ from . import util
 import markdown2
 
 class NewSearchForm(forms.Form):
-    search_text = forms.CharField(label="my")
+    search_text = forms.CharField(max_length=100)
+    search_text.label = ""
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -25,3 +26,9 @@ def entries(request, name):
         return render(request, "encyclopedia/error.html", {
             "entry_name": name
         })
+    
+def search(request):
+    if request.method == "POST":
+        form = NewSearchForm(request.POST)
+        if form.is_valid:
+            query = form.cleaned_data["query"]
