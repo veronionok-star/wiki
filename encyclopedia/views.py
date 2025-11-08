@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django import forms
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 from . import util
 import markdown2
@@ -30,5 +32,14 @@ def entries(request, name):
 def search(request):
     if request.method == "POST":
         form = NewSearchForm(request.POST)
-        if form.is_valid:
-            query = form.cleaned_data["query"]
+        if form.is_valid():
+            search_text = form.cleaned_data["search_text"]
+            print("form is valid")
+            if search_text in util.list_entries():
+                return HttpResponseRedirect(f'/wiki/{search_text}')
+                print("redirected")
+        else:
+            print("not valid")
+            return render(request, "tasks/add.html", {
+                "form": form
+            })
