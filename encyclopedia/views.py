@@ -18,6 +18,13 @@ class NewPageForm(forms.Form):
         label="Put the text of your page here:"
     )
 
+class EditPageForm(forms.Form):
+    page_name = forms.CharField(widget=forms.TextInput(attrs={'readonly': True}))
+    page_text = forms.CharField(
+        widget=forms.Textarea,
+        label="Edit the text here:"
+    )
+
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries(),
@@ -44,7 +51,6 @@ def search(request):
                 "text": "Results"
             })
         else:
-            print("not valid")
             return render(request, "encyclopedia/index.html", {
                 "form": form
             })
@@ -76,10 +82,10 @@ def add(request):
 
 def save(request):
     if request.method == "POST":
-        form = NewPageForm(request.POST)
+        form = EditPageForm(request.POST)
         if form.is_valid():
-            page_name = form.cleaned_data["page_name"]
             page_text = form.cleaned_data["page_text"]
+            page_name = form.cleaned_data["page_name"]
             with open(f'entries/{page_name}.md', 'w') as f:
                 f.write(page_text)
             return HttpResponseRedirect(f'/wiki/{page_name}')
@@ -95,7 +101,7 @@ def edit(request, name):
         "page_name": name,
         "page_text": util.get_entry(name),
     }
-    text_form = NewPageForm(initial=initial_data)
+    text_form = EditPageForm(initial=initial_data)
     return render(request, "encyclopedia/new.html", {
         "entry_name": name,
         "form": NewSearchForm,
