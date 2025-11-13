@@ -12,7 +12,8 @@ class NewSearchForm(forms.Form):
     search_text.label = ""
 
 class NewPageForm(forms.Form):
-    page_name = forms.CharField(max_length=100, label="Put the title of your page here:")
+    page_name = forms.CharField(max_length=50, label="Put the title of your page here:",
+        widget=forms.TextInput)
     page_text = forms.CharField(
         widget=forms.Textarea,
         label="Put the text of your page here:"
@@ -70,8 +71,7 @@ def add(request):
             page_name = form.cleaned_data["page_name"]
             page_text = form.cleaned_data["page_text"]
             if page_name not in util.list_entries():
-                with open(f'entries/{page_name}.md', 'w') as f:
-                    f.write(page_text)
+                util.save_entry(page_name, page_text)
                 return HttpResponseRedirect(f'/wiki/{page_name}')
             else:
                 return render(request, "encyclopedia/error.html", {
@@ -86,8 +86,7 @@ def save(request):
         if form.is_valid():
             page_text = form.cleaned_data["page_text"]
             page_name = form.cleaned_data["page_name"]
-            with open(f'entries/{page_name}.md', 'w') as f:
-                f.write(page_text)
+            util.save_entry(page_name, page_text)
             return HttpResponseRedirect(f'/wiki/{page_name}')
 
 def random_entry(request):
